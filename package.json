@@ -1,26 +1,30 @@
 {
-  "name": "auth-service",
-  "version": "1.0.0",
-  "description": "A user management service",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node src/server.js",
-    "format:check": "prettier . --check",
-    "format:fix": "prettier . --write",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prepare": "husky install"
-  },
-  "author": "Rakesh K <codersgyan@gmail.com>",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^20.5.9",
-    "@typescript-eslint/eslint-plugin": "^6.6.0",
-    "@typescript-eslint/parser": "^6.6.0",
-    "eslint": "^8.48.0",
-    "eslint-config-prettier": "^9.0.0",
-    "husky": "^8.0.3",
-    "prettier": "3.0.3",
-    "typescript": "^5.2.2"
-  }
+    "name": "auth-service",
+    "version": "1.0.0",
+    "description": "A user management service",
+    "main": "index.js",
+    "scripts": {
+        "dev": "node src/server.js",
+        "format:check": "prettier . --check",
+        "format:fix": "prettier . --write",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "prepare": "husky install"
+    },
+    "author": "Rakesh K <codersgyan@gmail.com>",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^20.5.9",
+        "@typescript-eslint/eslint-plugin": "^6.6.0",
+        "@typescript-eslint/parser": "^6.6.0",
+        "eslint": "^8.48.0",
+        "eslint-config-prettier": "^9.0.0",
+        "husky": "^8.0.3",
+        "lint-staged": "^14.0.1",
+        "prettier": "3.0.3",
+        "typescript": "^5.2.2"
+    },
+    "lint-staged": {
+        "*.ts": ["npm run lint:fix", "npm run format:fix"]
+      }
 }
