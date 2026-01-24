@@ -180,6 +180,10 @@ describe("POST /auth/register", () => {
             const users = await userRepository.find();
             expect(users).toHaveLength(0);
         });
+
+        it.todo("should return 400 status code if firstName is missing");
+        it.todo("should return 400 status code if lastName is missing");
+        it.todo("should return 400 status code if password is missing");
     });
 
     describe("Fields are not in proper format", () => {
@@ -200,5 +204,10 @@ describe("POST /auth/register", () => {
             const user = users[0];
             expect(user.email).toBe("rakesh@mern.space");
         });
+        it.todo("should return 400 status code if email is not a valid email");
+        it.todo(
+            "should return 400 status code if password length is less than 8 chars",
+        );
+        it.todo("shoud return an array of error messages if email is missing");
     });
 });
