@@ -29,7 +29,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             // Act
             const response = await request(app)
@@ -46,7 +46,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             // Act
             const response = await request(app)
@@ -65,7 +65,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             // Act
             await request(app).post("/auth/register").send(userData);
@@ -85,7 +85,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             // Act
             const response = await request(app)
@@ -107,7 +107,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             // Act
             await request(app).post("/auth/register").send(userData);
@@ -125,7 +125,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             // Act
             await request(app).post("/auth/register").send(userData);
@@ -144,7 +144,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             const userRepository = connection.getRepository(User);
             await userRepository.save({ ...userData, role: Roles.CUSTOMER });
@@ -167,7 +167,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: "",
-                password: "secret",
+                password: "password",
             };
             // Act
             const response = await request(app)
@@ -187,7 +187,7 @@ describe("POST /auth/register", () => {
                 firstName: "",
                 lastName: "K",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             // Act
             const response = await request(app)
@@ -206,7 +206,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "",
                 email: "rakesh@mern.space",
-                password: "secret",
+                password: "password",
             };
             // Act
             const response = await request(app)
@@ -248,7 +248,7 @@ describe("POST /auth/register", () => {
                 firstName: "Rakesh",
                 lastName: "K",
                 email: " rakesh@mern.space ",
-                password: "secret",
+                password: "password",
             };
             // Act
             await request(app).post("/auth/register").send(userData);
@@ -278,9 +278,25 @@ describe("POST /auth/register", () => {
             const users = await userRepository.find();
             expect(users).toHaveLength(0);
         });
-        it.todo(
-            "should return 400 status code if password length is less than 8 chars",
-        );
+        it("should return 400 status code if password length is less than 8 chars", async () => {
+            // Arrange
+            const userData = {
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "rakesh@mern.space",
+                password: "pass", // less than 8 chars
+            };
+            // Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+
+            // Assert
+            expect(response.statusCode).toBe(400);
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+            expect(users).toHaveLength(0);
+        });
         it.todo("shoud return an array of error messages if email is missing");
     });
 });
