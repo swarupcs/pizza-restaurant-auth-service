@@ -12,7 +12,9 @@
         "prepare": "husky install",
         "test": "jest --watch --runInBand",
         "start": "ts-node src/index.ts",
-        "typeorm": "typeorm-ts-node-commonjs"
+        "migration:generate": "typeorm-ts-node-commonjs migration:generate",
+        "migration:run": "typeorm-ts-node-commonjs migration:run",
+        "migration:create": "typeorm-ts-node-commonjs migration:create"
     },
     "author": "Rakesh K <codersgyan@gmail.com>",
     "license": "ISC",
