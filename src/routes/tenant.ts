@@ -34,7 +34,9 @@ router.patch(
         tenantController.update(req, res, next),
 );
 router.get("/", (req, res, next) => tenantController.getAll(req, res, next));
-router.get("/:id", (req, res, next) => tenantController.getOne(req, res, next));
+router.get("/:id", authenticate, canAccess([Roles.ADMIN]), (req, res, next) =>
+    tenantController.getOne(req, res, next),
+);
 router.delete(
     "/:id",
     authenticate,
