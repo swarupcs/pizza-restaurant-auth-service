@@ -1,4 +1,9 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, {
+    NextFunction,
+    Request,
+    RequestHandler,
+    Response,
+} from "express";
 import { AuthController } from "../controllers/AuthController";
 import { UserService } from "../services/UserService";
 import { AppDataSource } from "../config/data-source";
@@ -27,37 +32,52 @@ const authController = new AuthController(
     credentialService,
 );
 
-router.post(
-    "/register",
-    registerValidator,
-    (req: Request, res: Response, next: NextFunction) =>
-        authController.register(req, res, next),
-);
+router.post("/register", registerValidator, (async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    await authController.register(req, res, next);
+}) as RequestHandler);
 
 router.post(
     "/login",
     loginValidator,
     (req: Request, res: Response, next: NextFunction) =>
-        authController.login(req, res, next),
+        authController.login(req, res, next) as unknown as RequestHandler,
 );
 
-router.get("/self", authenticate, (req: Request, res: Response) =>
-    authController.self(req as AuthRequest, res),
+router.get(
+    "/self",
+    authenticate as RequestHandler,
+    (req: Request, res: Response) =>
+        authController.self(
+            req as AuthRequest,
+            res,
+        ) as unknown as RequestHandler,
 );
 
 router.post(
     "/refresh",
-    validateRefreshToken,
+    validateRefreshToken as RequestHandler,
     (req: Request, res: Response, next: NextFunction) =>
-        authController.refresh(req as AuthRequest, res, next),
+        authController.refresh(
+            req as AuthRequest,
+            res,
+            next,
+        ) as unknown as RequestHandler,
 );
 
 router.post(
     "/logout",
-    authenticate,
-    parseRefreshToken,
+    authenticate as RequestHandler,
+    parseRefreshToken as RequestHandler,
     (req: Request, res: Response, next: NextFunction) =>
-        authController.logout(req as AuthRequest, res, next),
+        authController.logout(
+            req as AuthRequest,
+            res,
+            next,
+        ) as unknown as RequestHandler,
 );
 
 export default router;
