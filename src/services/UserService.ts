@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import bcrypt from "bcryptjs";
 import { User } from "../entity/User";
-import { LimitedUserData, UserData } from "../types";
+import { LimitedUserData, UserData, UserQueryParams } from "../types";
 import createHttpError from "http-errors";
 
 export class UserService {
@@ -89,8 +89,13 @@ export class UserService {
         }
     }
 
-    async getAll() {
-        return await this.userRepository.find();
+    async getAll(validatedQuery: UserQueryParams) {
+        const queryBuilder = this.userRepository.createQueryBuilder();
+        const result = await queryBuilder
+            .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
+            .take(validatedQuery.perPage)
+            .getManyAndCount();
+        return result;
     }
 
     async deleteById(userId: number) {
