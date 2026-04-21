@@ -25,9 +25,10 @@ export class TokenService {
 
         const accessToken = sign(payload, privateKey, {
             algorithm: "RS256",
-            expiresIn: "1h",
+            expiresIn: "1m",
             issuer: "auth-service",
         });
+
         return accessToken;
     }
 
@@ -38,6 +39,7 @@ export class TokenService {
             issuer: "auth-service",
             jwtid: String(payload.id),
         });
+
         return refreshToken;
     }
 
