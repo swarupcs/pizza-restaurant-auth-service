@@ -18,7 +18,7 @@
         "migration:run": "typeorm-ts-node-commonjs migration:run",
         "migration:create": "typeorm-ts-node-commonjs migration:create"
     },
-    "author": "Rakesh K <codersgyan@gmail.com>",
+    "author": "Swarup Das",
     "license": "ISC",
     "devDependencies": {
         "@types/bcrypt": "^5.0.0",
