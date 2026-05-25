@@ -69,9 +69,6 @@ web_modules/
 # Output of 'npm pack'
 *.tgz
 
-certs/
-public/
-
 # Yarn Integrity file
 .yarn-integrity
 
@@ -79,13 +76,8 @@ public/
 .env
 .env.development.local
 .env.test.local
-.env.production
 .env.production.local
 .env.local
-.env.prod
-.env.dev
-.env.test
-.env.migration
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -112,6 +104,12 @@ dist
 .temp
 .cache
 
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
 # Docusaurus cache and generated files
 .docusaurus
 
@@ -136,3 +134,18 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.vscode/settings.json
+.vscode/settings.json
+
+
+.vscode/settings.json
+.env.dev
+.env.prod
+.env.test
+
+
+certs/
+public/
+
+.env.docker.prod
+.env.dockerImage.prod
