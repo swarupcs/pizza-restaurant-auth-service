@@ -9,6 +9,7 @@ export const AppDataSource = new DataSource({
     username: Config.DB_USERNAME,
     password: Config.DB_PASSWORD,
     database: Config.DB_NAME,
+    ssl: Config.DB_HOST !== "localhost" ? { rejectUnauthorized: false } : false,
     // Don't use this in production. Always keep false
     synchronize: false,
     logging: false,
