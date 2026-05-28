@@ -11,20 +11,20 @@ The Auth Service handles all user identity concerns: registration, login, token 
 
 All protected endpoints rely on **httpOnly cookies** set automatically after a successful login or register:
 
-| Cookie | Lifetime | Purpose |
-|---|---|---|
-| `accessToken` | 1 day | Short-lived JWT for authenticating requests |
-| `refreshToken` | 1 year | Long-lived JWT used to rotate tokens |
+| Cookie         | Lifetime | Purpose                                     |
+| -------------- | -------- | ------------------------------------------- |
+| `accessToken`  | 1 day    | Short-lived JWT for authenticating requests |
+| `refreshToken` | 1 year   | Long-lived JWT used to rotate tokens        |
 
 Cookies are sent automatically by the browser or Postman (when cookie handling is enabled). **No `Authorization` header is needed.**
 
 ### Roles
 
-| Role | Description |
-|---|---|
+| Role       | Description                                                       |
+| ---------- | ----------------------------------------------------------------- |
 | `customer` | Self-registered via `/auth/register`. Can view their own profile. |
-| `manager` | Created by admin. Scoped to a single tenant (restaurant). |
-| `admin` | Platform administrator. Full access to all resources. |
+| `manager`  | Created by admin. Scoped to a single tenant (restaurant).         |
+| `admin`    | Platform administrator. Full access to all resources.             |
 
 ---
 
@@ -44,19 +44,19 @@ Register a new customer account.
 
 ```json
 {
-  "firstName": "Swarup",
-  "lastName": "Das",
-  "email": "swarup@example.com",
-  "password": "secret@123"
+    "firstName": "Swarup",
+    "lastName": "Das",
+    "email": "swarup@example.com",
+    "password": "secret@123"
 }
 ```
 
-| Field | Type | Required | Validation |
-|---|---|---|---|
-| `firstName` | string | ✅ | Non-empty |
-| `lastName` | string | ✅ | Non-empty |
-| `email` | string | ✅ | Valid email format |
-| `password` | string | ✅ | Min 8 characters |
+| Field       | Type   | Required | Validation         |
+| ----------- | ------ | -------- | ------------------ |
+| `firstName` | string | ✅       | Non-empty          |
+| `lastName`  | string | ✅       | Non-empty          |
+| `email`     | string | ✅       | Valid email format |
+| `password`  | string | ✅       | Min 8 characters   |
 
 **Response — `201 Created`:**
 
@@ -65,21 +65,22 @@ Register a new customer account.
 ```
 
 **Sets cookies:**
-- `accessToken` (httpOnly, sameSite: strict, 1 day)
-- `refreshToken` (httpOnly, sameSite: strict, 1 year)
+
+-   `accessToken` (httpOnly, sameSite: strict, 1 day)
+-   `refreshToken` (httpOnly, sameSite: strict, 1 year)
 
 **Response — `400 Bad Request` (validation failure):**
 
 ```json
 {
-  "errors": [
-    {
-      "type": "field",
-      "msg": "First name is required!",
-      "path": "firstName",
-      "location": "body"
-    }
-  ]
+    "errors": [
+        {
+            "type": "field",
+            "msg": "First name is required!",
+            "path": "firstName",
+            "location": "body"
+        }
+    ]
 }
 ```
 
@@ -95,15 +96,15 @@ Authenticate a user with email and password.
 
 ```json
 {
-  "email": "swarup@example.com",
-  "password": "secret@123"
+    "email": "swarup@example.com",
+    "password": "secret@123"
 }
 ```
 
-| Field | Type | Required | Validation |
-|---|---|---|---|
-| `email` | string | ✅ | Valid email format |
-| `password` | string | ✅ | Non-empty |
+| Field      | Type   | Required | Validation         |
+| ---------- | ------ | -------- | ------------------ |
+| `email`    | string | ✅       | Valid email format |
+| `password` | string | ✅       | Non-empty          |
 
 **Response — `200 OK`:**
 
@@ -112,16 +113,20 @@ Authenticate a user with email and password.
 ```
 
 **Sets cookies:**
-- `accessToken` (httpOnly, sameSite: strict, 1 day)
-- `refreshToken` (httpOnly, sameSite: strict, 1 year)
+
+-   `accessToken` (httpOnly, sameSite: strict, 1 day)
+-   `refreshToken` (httpOnly, sameSite: strict, 1 year)
 
 **Response — `400 Bad Request` (wrong credentials):**
 
 ```json
 {
-  "errors": [
-    { "type": "UnauthorizedError", "message": "Email or password does not match." }
-  ]
+    "errors": [
+        {
+            "type": "UnauthorizedError",
+            "message": "Email or password does not match."
+        }
+    ]
 }
 ```
 
@@ -139,14 +144,14 @@ Get the profile of the currently authenticated user.
 
 ```json
 {
-  "id": 1,
-  "firstName": "Swarup",
-  "lastName": "Das",
-  "email": "swarup@example.com",
-  "role": "customer",
-  "tenant": null,
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "updatedAt": "2024-01-01T00:00:00.000Z"
+    "id": 1,
+    "firstName": "Swarup",
+    "lastName": "Das",
+    "email": "swarup@example.com",
+    "role": "customer",
+    "tenant": null,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
 }
 ```
 
@@ -156,9 +161,12 @@ Get the profile of the currently authenticated user.
 
 ```json
 {
-  "errors": [
-    { "type": "UnauthorizedError", "message": "No authorization token was found" }
-  ]
+    "errors": [
+        {
+            "type": "UnauthorizedError",
+            "message": "No authorization token was found"
+        }
+    ]
 }
 ```
 
@@ -173,10 +181,11 @@ Rotate both tokens — exchanges the existing `refreshToken` cookie for new `acc
 **Request Body:** None
 
 **Behavior:**
-- Validates the refresh token's JWT signature and checks it exists in the database
-- Deletes the old refresh token from the database
-- Persists a new refresh token
-- Issues new `accessToken` and `refreshToken` cookies
+
+-   Validates the refresh token's JWT signature and checks it exists in the database
+-   Deletes the old refresh token from the database
+-   Persists a new refresh token
+-   Issues new `accessToken` and `refreshToken` cookies
 
 **Response — `200 OK`:**
 
@@ -185,8 +194,9 @@ Rotate both tokens — exchanges the existing `refreshToken` cookie for new `acc
 ```
 
 **Sets cookies:**
-- `accessToken` (new, httpOnly, 1 day)
-- `refreshToken` (new, httpOnly, 1 year)
+
+-   `accessToken` (new, httpOnly, 1 day)
+-   `refreshToken` (new, httpOnly, 1 year)
 
 ---
 
@@ -199,9 +209,10 @@ Log out the current user.
 **Request Body:** None
 
 **Behavior:**
-- Reads `id` from the refresh token JWT (the DB record ID)
-- Deletes the refresh token from the database
-- Clears both `accessToken` and `refreshToken` cookies
+
+-   Reads `id` from the refresh token JWT (the DB record ID)
+-   Deletes the refresh token from the database
+-   Clears both `accessToken` and `refreshToken` cookies
 
 **Response — `200 OK`:**
 
@@ -229,15 +240,15 @@ Create a new restaurant tenant.
 
 ```json
 {
-  "name": "Pizza Planet",
-  "address": "123 Main Street, Mumbai, Maharashtra 400001"
+    "name": "Pizza Planet",
+    "address": "123 Main Street, Mumbai, Maharashtra 400001"
 }
 ```
 
-| Field | Type | Required | Validation |
-|---|---|---|---|
-| `name` | string | ✅ | Non-empty |
-| `address` | string | ✅ | Non-empty |
+| Field     | Type   | Required | Validation |
+| --------- | ------ | -------- | ---------- |
+| `name`    | string | ✅       | Non-empty  |
+| `address` | string | ✅       | Non-empty  |
 
 **Response — `201 Created`:**
 
@@ -249,9 +260,12 @@ Create a new restaurant tenant.
 
 ```json
 {
-  "errors": [
-    { "type": "ForbiddenError", "message": "You don't have enough permissions" }
-  ]
+    "errors": [
+        {
+            "type": "ForbiddenError",
+            "message": "You don't have enough permissions"
+        }
+    ]
 }
 ```
 
@@ -265,13 +279,14 @@ Retrieve a paginated list of all tenants.
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `currentPage` | number | `1` | Page number |
-| `perPage` | number | `6` | Items per page |
-| `q` | string | `""` | Search keyword |
+| Parameter     | Type   | Default | Description    |
+| ------------- | ------ | ------- | -------------- |
+| `currentPage` | number | `1`     | Page number    |
+| `perPage`     | number | `6`     | Items per page |
+| `q`           | string | `""`    | Search keyword |
 
 **Example Request:**
+
 ```
 GET /tenants?currentPage=1&perPage=6&q=pizza
 ```
@@ -280,18 +295,18 @@ GET /tenants?currentPage=1&perPage=6&q=pizza
 
 ```json
 {
-  "currentPage": 1,
-  "perPage": 6,
-  "total": 2,
-  "data": [
-    {
-      "id": 1,
-      "name": "Pizza Planet",
-      "address": "123 Main Street, Mumbai",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    }
-  ]
+    "currentPage": 1,
+    "perPage": 6,
+    "total": 2,
+    "data": [
+        {
+            "id": 1,
+            "name": "Pizza Planet",
+            "address": "123 Main Street, Mumbai",
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+        }
+    ]
 }
 ```
 
@@ -305,19 +320,19 @@ Retrieve a single tenant by its numeric ID.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|---|---|---|
-| `id` | number | Tenant ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `id`      | number | Tenant ID   |
 
 **Response — `200 OK`:**
 
 ```json
 {
-  "id": 1,
-  "name": "Pizza Planet",
-  "address": "123 Main Street, Mumbai",
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "updatedAt": "2024-01-01T00:00:00.000Z"
+    "id": 1,
+    "name": "Pizza Planet",
+    "address": "123 Main Street, Mumbai",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
 }
 ```
 
@@ -325,7 +340,7 @@ Retrieve a single tenant by its numeric ID.
 
 ```json
 {
-  "errors": [{ "type": "HttpError", "message": "Tenant does not exist." }]
+    "errors": [{ "type": "HttpError", "message": "Tenant does not exist." }]
 }
 ```
 
@@ -339,23 +354,23 @@ Update an existing tenant.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|---|---|---|
-| `id` | number | Tenant ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `id`      | number | Tenant ID   |
 
 **Request Body** (`application/json`):
 
 ```json
 {
-  "name": "Pizza Planet (Updated)",
-  "address": "456 New Street, Delhi, India 110001"
+    "name": "Pizza Planet (Updated)",
+    "address": "456 New Street, Delhi, India 110001"
 }
 ```
 
-| Field | Type | Required |
-|---|---|---|
-| `name` | string | ✅ |
-| `address` | string | ✅ |
+| Field     | Type   | Required |
+| --------- | ------ | -------- |
+| `name`    | string | ✅       |
+| `address` | string | ✅       |
 
 **Response — `200 OK`:**
 
@@ -373,9 +388,9 @@ Delete a tenant by ID.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|---|---|---|
-| `id` | number | Tenant ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `id`      | number | Tenant ID   |
 
 **Response — `200 OK`:**
 
@@ -403,23 +418,23 @@ Create a new user (manager or admin) directly — bypasses self-registration.
 
 ```json
 {
-  "firstName": "Rahul",
-  "lastName": "Sharma",
-  "email": "rahul@pizzaplanet.com",
-  "password": "manager@123",
-  "role": "manager",
-  "tenantId": 1
+    "firstName": "Rahul",
+    "lastName": "Sharma",
+    "email": "rahul@pizzaplanet.com",
+    "password": "manager@123",
+    "role": "manager",
+    "tenantId": 1
 }
 ```
 
-| Field | Type | Required | Validation |
-|---|---|---|---|
-| `firstName` | string | ✅ | Non-empty |
-| `lastName` | string | ✅ | Non-empty |
-| `email` | string | ✅ | Valid email |
-| `password` | string | ✅ | Min 8 characters |
-| `role` | string | ✅ | `manager` or `admin` |
-| `tenantId` | number | ⚠️ | Required when `role` is `manager` |
+| Field       | Type   | Required | Validation                        |
+| ----------- | ------ | -------- | --------------------------------- |
+| `firstName` | string | ✅       | Non-empty                         |
+| `lastName`  | string | ✅       | Non-empty                         |
+| `email`     | string | ✅       | Valid email                       |
+| `password`  | string | ✅       | Min 8 characters                  |
+| `role`      | string | ✅       | `manager` or `admin`              |
+| `tenantId`  | number | ⚠️       | Required when `role` is `manager` |
 
 **Response — `201 Created`:**
 
@@ -437,14 +452,15 @@ Retrieve a paginated, filterable list of all users.
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `currentPage` | number | `1` | Page number |
-| `perPage` | number | `6` | Items per page |
-| `q` | string | `""` | Search by name or email |
-| `role` | string | `""` | Filter by role: `customer`, `manager`, `admin` |
+| Parameter     | Type   | Default | Description                                    |
+| ------------- | ------ | ------- | ---------------------------------------------- |
+| `currentPage` | number | `1`     | Page number                                    |
+| `perPage`     | number | `6`     | Items per page                                 |
+| `q`           | string | `""`    | Search by name or email                        |
+| `role`        | string | `""`    | Filter by role: `customer`, `manager`, `admin` |
 
 **Example Request:**
+
 ```
 GET /users?currentPage=1&perPage=6&role=manager
 ```
@@ -453,21 +469,21 @@ GET /users?currentPage=1&perPage=6&role=manager
 
 ```json
 {
-  "currentPage": 1,
-  "perPage": 6,
-  "total": 10,
-  "data": [
-    {
-      "id": 2,
-      "firstName": "Rahul",
-      "lastName": "Sharma",
-      "email": "rahul@pizzaplanet.com",
-      "role": "manager",
-      "tenant": { "id": 1, "name": "Pizza Planet" },
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    }
-  ]
+    "currentPage": 1,
+    "perPage": 6,
+    "total": 10,
+    "data": [
+        {
+            "id": 2,
+            "firstName": "Rahul",
+            "lastName": "Sharma",
+            "email": "rahul@pizzaplanet.com",
+            "role": "manager",
+            "tenant": { "id": 1, "name": "Pizza Planet" },
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+        }
+    ]
 }
 ```
 
@@ -481,22 +497,22 @@ Retrieve a single user by their numeric ID.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|---|---|---|
-| `id` | number | User ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `id`      | number | User ID     |
 
 **Response — `200 OK`:**
 
 ```json
 {
-  "id": 2,
-  "firstName": "Rahul",
-  "lastName": "Sharma",
-  "email": "rahul@pizzaplanet.com",
-  "role": "manager",
-  "tenant": { "id": 1, "name": "Pizza Planet" },
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "updatedAt": "2024-01-01T00:00:00.000Z"
+    "id": 2,
+    "firstName": "Rahul",
+    "lastName": "Sharma",
+    "email": "rahul@pizzaplanet.com",
+    "role": "manager",
+    "tenant": { "id": 1, "name": "Pizza Planet" },
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
 }
 ```
 
@@ -504,7 +520,7 @@ Retrieve a single user by their numeric ID.
 
 ```json
 {
-  "errors": [{ "type": "HttpError", "message": "User does not exist." }]
+    "errors": [{ "type": "HttpError", "message": "User does not exist." }]
 }
 ```
 
@@ -520,29 +536,29 @@ Update an existing user.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|---|---|---|
-| `id` | number | User ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `id`      | number | User ID     |
 
 **Request Body** (`application/json`):
 
 ```json
 {
-  "firstName": "Rahul",
-  "lastName": "Sharma",
-  "email": "rahul@pizzaplanet.com",
-  "role": "manager",
-  "tenantId": 1
+    "firstName": "Rahul",
+    "lastName": "Sharma",
+    "email": "rahul@pizzaplanet.com",
+    "role": "manager",
+    "tenantId": 1
 }
 ```
 
-| Field | Type | Required | Validation |
-|---|---|---|---|
-| `firstName` | string | ✅ | Non-empty |
-| `lastName` | string | ✅ | Non-empty |
-| `email` | string | ✅ | Valid email |
-| `role` | string | ✅ | Non-empty |
-| `tenantId` | number | ⚠️ | Required when `role` is `manager` |
+| Field       | Type   | Required | Validation                        |
+| ----------- | ------ | -------- | --------------------------------- |
+| `firstName` | string | ✅       | Non-empty                         |
+| `lastName`  | string | ✅       | Non-empty                         |
+| `email`     | string | ✅       | Valid email                       |
+| `role`      | string | ✅       | Non-empty                         |
+| `tenantId`  | number | ⚠️       | Required when `role` is `manager` |
 
 **Response — `200 OK`:**
 
@@ -560,9 +576,9 @@ Delete a user by ID.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|---|---|---|
-| `id` | number | User ID |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| `id`      | number | User ID     |
 
 **Response — `200 OK`:**
 
@@ -574,23 +590,23 @@ Delete a user by ID.
 
 ## 📋 Endpoint Summary
 
-| Method | Endpoint | Auth | Role |
-|---|---|---|---|
-| `POST` | `/auth/register` | ❌ Public | — |
-| `POST` | `/auth/login` | ❌ Public | — |
-| `GET` | `/auth/self` | ✅ Cookie | Any |
-| `POST` | `/auth/refresh` | ✅ Cookie | Any |
-| `POST` | `/auth/logout` | ✅ Cookie | Any |
-| `POST` | `/tenants` | ✅ Cookie | Admin |
-| `GET` | `/tenants` | ❌ Public | — |
-| `GET` | `/tenants/:id` | ✅ Cookie | Admin |
-| `PATCH` | `/tenants/:id` | ✅ Cookie | Admin |
-| `DELETE` | `/tenants/:id` | ✅ Cookie | Admin |
-| `POST` | `/users` | ✅ Cookie | Admin |
-| `GET` | `/users` | ✅ Cookie | Admin |
-| `GET` | `/users/:id` | ✅ Cookie | Admin |
-| `PATCH` | `/users/:id` | ✅ Cookie | Admin |
-| `DELETE` | `/users/:id` | ✅ Cookie | Admin |
+| Method   | Endpoint         | Auth      | Role  |
+| -------- | ---------------- | --------- | ----- |
+| `POST`   | `/auth/register` | ❌ Public | —     |
+| `POST`   | `/auth/login`    | ❌ Public | —     |
+| `GET`    | `/auth/self`     | ✅ Cookie | Any   |
+| `POST`   | `/auth/refresh`  | ✅ Cookie | Any   |
+| `POST`   | `/auth/logout`   | ✅ Cookie | Any   |
+| `POST`   | `/tenants`       | ✅ Cookie | Admin |
+| `GET`    | `/tenants`       | ❌ Public | —     |
+| `GET`    | `/tenants/:id`   | ✅ Cookie | Admin |
+| `PATCH`  | `/tenants/:id`   | ✅ Cookie | Admin |
+| `DELETE` | `/tenants/:id`   | ✅ Cookie | Admin |
+| `POST`   | `/users`         | ✅ Cookie | Admin |
+| `GET`    | `/users`         | ✅ Cookie | Admin |
+| `GET`    | `/users/:id`     | ✅ Cookie | Admin |
+| `PATCH`  | `/users/:id`     | ✅ Cookie | Admin |
+| `DELETE` | `/users/:id`     | ✅ Cookie | Admin |
 
 ---
 
@@ -600,19 +616,19 @@ All errors follow this format:
 
 ```json
 {
-  "errors": [
-    {
-      "type": "HttpError | UnauthorizedError | ForbiddenError | field",
-      "message": "Human-readable error message"
-    }
-  ]
+    "errors": [
+        {
+            "type": "HttpError | UnauthorizedError | ForbiddenError | field",
+            "message": "Human-readable error message"
+        }
+    ]
 }
 ```
 
-| Status Code | Meaning |
-|---|---|
-| `400` | Validation error or bad input |
-| `401` | Missing or invalid access token |
-| `403` | Authenticated but insufficient role |
-| `404` | Resource not found |
-| `500` | Internal server error |
+| Status Code | Meaning                             |
+| ----------- | ----------------------------------- |
+| `400`       | Validation error or bad input       |
+| `401`       | Missing or invalid access token     |
+| `403`       | Authenticated but insufficient role |
+| `404`       | Resource not found                  |
+| `500`       | Internal server error               |
