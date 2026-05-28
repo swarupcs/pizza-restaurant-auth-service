@@ -1,740 +1,803 @@
 {
-  "info": {
-    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "name": "Auth Service",
-    "description": "Complete API collection for the Auth Service.\n\n**Base URL:** `{{baseUrl}}`  (default: `http://localhost:5501`)\n\n**Auth:** Most protected endpoints use `httpOnly` cookies (`accessToken` / `refreshToken`) set automatically after login or register. No manual token handling is needed when using Postman with cookie support enabled.\n\n**Roles:**\n- `customer` – self-registered users\n- `manager` – tenant-scoped staff (created by admin)\n- `admin` – platform admin",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:5501",
-      "type": "string"
+    "info": {
+        "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "name": "Auth Service",
+        "description": "Complete API collection for the Auth Service.\n\n**Base URL:** `{{baseUrl}}`  (default: `http://localhost:5501`)\n\n**Auth:** Most protected endpoints use `httpOnly` cookies (`accessToken` / `refreshToken`) set automatically after login or register. No manual token handling is needed when using Postman with cookie support enabled.\n\n**Roles:**\n- `customer` – self-registered users\n- `manager` – tenant-scoped staff (created by admin)\n- `admin` – platform admin",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
-    {
-      "key": "tenantId",
-      "value": "1",
-      "type": "string"
-    },
-    {
-      "key": "userId",
-      "value": "1",
-      "type": "string"
-    }
-  ],
-  "item": [
-    {
-      "name": "Auth",
-      "description": "Authentication endpoints — register, login, get current user, refresh token, and logout.",
-      "item": [
+    "variable": [
         {
-          "name": "Register",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Swarup\",\n  \"lastName\": \"Das\",\n  \"email\": \"swarup@example.com\",\n  \"password\": \"secret@123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "register"]
-            },
-            "description": "Register a new customer account.\n\n**Sets cookies:** `accessToken` (1 day) and `refreshToken` (1 year) as `httpOnly` cookies.\n\n**Returns:** `{ id: number }`\n\n**Validation rules:**\n- `firstName` – required\n- `lastName` – required\n- `email` – required, valid email format\n- `password` – required, min 8 characters"
-          },
-          "response": [
-            {
-              "name": "201 Created",
-              "originalRequest": {
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"firstName\": \"Swarup\",\n  \"lastName\": \"Das\",\n  \"email\": \"swarup@example.com\",\n  \"password\": \"secret@123\"\n}"
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/auth/register"
-                }
-              },
-              "status": "Created",
-              "code": 201,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1\n}"
-            },
-            {
-              "name": "400 Validation Error",
-              "originalRequest": {
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"email\": \"not-an-email\"\n}"
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/auth/register"
-                }
-              },
-              "status": "Bad Request",
-              "code": 400,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"errors\": [\n    { \"type\": \"field\", \"msg\": \"First name is required!\", \"path\": \"firstName\", \"location\": \"body\" }\n  ]\n}"
-            }
-          ]
+            "key": "baseUrl",
+            "value": "http://localhost:5501",
+            "type": "string"
         },
         {
-          "name": "Login",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"swarup@example.com\",\n  \"password\": \"secret@123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
-            },
-            "description": "Authenticate a user and receive `accessToken` and `refreshToken` cookies.\n\n**Sets cookies:** `accessToken` (1 day) and `refreshToken` (1 year) as `httpOnly` cookies.\n\n**Returns:** `{ id: number }`\n\n**Validation rules:**\n- `email` – required, valid email\n- `password` – required"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"email\": \"swarup@example.com\",\n  \"password\": \"secret@123\"\n}"
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/auth/login"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1\n}"
-            },
-            {
-              "name": "400 Invalid Credentials",
-              "originalRequest": {
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"email\": \"swarup@example.com\",\n  \"password\": \"wrongpassword\"\n}"
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/auth/login"
-                }
-              },
-              "status": "Bad Request",
-              "code": 400,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"errors\": [\n    { \"type\": \"UnauthorizedError\", \"message\": \"Email or password does not match.\" }\n  ]\n}"
-            }
-          ]
+            "key": "tenantId",
+            "value": "1",
+            "type": "string"
         },
         {
-          "name": "Get Current User (Self)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/self",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "self"]
-            },
-            "description": "Returns the profile of the currently authenticated user.\n\n**Auth required:** `accessToken` cookie (set on login/register).\n\n**Returns:** User object (password field omitted)."
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{baseUrl}}/auth/self"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1,\n  \"firstName\": \"Swarup\",\n  \"lastName\": \"Das\",\n  \"email\": \"swarup@example.com\",\n  \"role\": \"customer\",\n  \"tenant\": null,\n  \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n  \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n}"
-            },
-            {
-              "name": "401 Unauthorized",
-              "originalRequest": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{baseUrl}}/auth/self"
-                }
-              },
-              "status": "Unauthorized",
-              "code": 401,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"errors\": [\n    { \"type\": \"UnauthorizedError\", \"message\": \"No authorization token was found\" }\n  ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Refresh Token",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/refresh",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "refresh"]
-            },
-            "description": "Rotate tokens — exchange the existing `refreshToken` cookie for a new `accessToken` and `refreshToken`.\n\n**Auth required:** `refreshToken` cookie.\n\n**Behavior:** Deletes the old refresh token from the database and creates a new one (token rotation).\n\n**Returns:** `{ id: number }`"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/auth/refresh"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1\n}"
-            }
-          ]
-        },
-        {
-          "name": "Logout",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/logout",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "logout"]
-            },
-            "description": "Log out the current user.\n\n**Auth required:** `accessToken` cookie (and `refreshToken` cookie to delete the persisted token).\n\n**Behavior:** Deletes the refresh token from the database and clears both `accessToken` and `refreshToken` cookies.\n\n**Returns:** `{}`"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/auth/logout"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{}"
-            }
-          ]
+            "key": "userId",
+            "value": "1",
+            "type": "string"
         }
-      ]
-    },
-    {
-      "name": "Tenants",
-      "description": "Restaurant / tenant management endpoints.\n\n**Note:** GET /tenants (list) is public. All other endpoints require `admin` role.",
-      "item": [
+    ],
+    "item": [
         {
-          "name": "Create Tenant",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Pizza Planet\",\n  \"address\": \"123 Main Street, Mumbai, Maharashtra 400001\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/tenants",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants"]
-            },
-            "description": "Create a new restaurant tenant.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`\n\n**Validation rules:**\n- `name` – required\n- `address` – required"
-          },
-          "response": [
-            {
-              "name": "201 Created",
-              "originalRequest": {
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Pizza Planet\",\n  \"address\": \"123 Main Street, Mumbai\"\n}"
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/tenants"
-                }
-              },
-              "status": "Created",
-              "code": 201,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1\n}"
-            },
-            {
-              "name": "403 Forbidden",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/tenants"
-                }
-              },
-              "status": "Forbidden",
-              "code": 403,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"errors\": [\n    { \"type\": \"ForbiddenError\", \"message\": \"You don't have enough permissions\" }\n  ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Get All Tenants",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tenants?currentPage=1&perPage=6&q=",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants"],
-              "query": [
+            "name": "Auth",
+            "description": "Authentication endpoints — register, login, get current user, refresh token, and logout.",
+            "item": [
                 {
-                  "key": "currentPage",
-                  "value": "1",
-                  "description": "Page number (default: 1)"
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"firstName\": \"Swarup\",\n  \"lastName\": \"Das\",\n  \"email\": \"swarup@example.com\",\n  \"password\": \"secret@123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/register",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["auth", "register"]
+                        },
+                        "description": "Register a new customer account.\n\n**Sets cookies:** `accessToken` (1 day) and `refreshToken` (1 year) as `httpOnly` cookies.\n\n**Returns:** `{ id: number }`\n\n**Validation rules:**\n- `firstName` – required\n- `lastName` – required\n- `email` – required, valid email format\n- `password` – required, min 8 characters"
+                    },
+                    "response": [
+                        {
+                            "name": "201 Created",
+                            "originalRequest": {
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"firstName\": \"Swarup\",\n  \"lastName\": \"Das\",\n  \"email\": \"swarup@example.com\",\n  \"password\": \"secret@123\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/auth/register"
+                                }
+                            },
+                            "status": "Created",
+                            "code": 201,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1\n}"
+                        },
+                        {
+                            "name": "400 Validation Error",
+                            "originalRequest": {
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"email\": \"not-an-email\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/auth/register"
+                                }
+                            },
+                            "status": "Bad Request",
+                            "code": 400,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"errors\": [\n    { \"type\": \"field\", \"msg\": \"First name is required!\", \"path\": \"firstName\", \"location\": \"body\" }\n  ]\n}"
+                        }
+                    ]
                 },
                 {
-                  "key": "perPage",
-                  "value": "6",
-                  "description": "Items per page (default: 6)"
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"swarup@example.com\",\n  \"password\": \"secret@123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["auth", "login"]
+                        },
+                        "description": "Authenticate a user and receive `accessToken` and `refreshToken` cookies.\n\n**Sets cookies:** `accessToken` (1 day) and `refreshToken` (1 year) as `httpOnly` cookies.\n\n**Returns:** `{ id: number }`\n\n**Validation rules:**\n- `email` – required, valid email\n- `password` – required"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"email\": \"swarup@example.com\",\n  \"password\": \"secret@123\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/auth/login"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1\n}"
+                        },
+                        {
+                            "name": "400 Invalid Credentials",
+                            "originalRequest": {
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"email\": \"swarup@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/auth/login"
+                                }
+                            },
+                            "status": "Bad Request",
+                            "code": 400,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"errors\": [\n    { \"type\": \"UnauthorizedError\", \"message\": \"Email or password does not match.\" }\n  ]\n}"
+                        }
+                    ]
                 },
                 {
-                  "key": "q",
-                  "value": "",
-                  "description": "Search query (optional)"
-                }
-              ]
-            },
-            "description": "Retrieve a paginated list of all tenants.\n\n**Auth required:** None (public endpoint).\n\n**Returns:** `{ currentPage, perPage, total, data: Tenant[] }`"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{baseUrl}}/tenants?currentPage=1&perPage=6"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"currentPage\": 1,\n  \"perPage\": 6,\n  \"total\": 2,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Pizza Planet\",\n      \"address\": \"123 Main Street, Mumbai\",\n      \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n      \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n    }\n  ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Get Tenant By ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tenants/{{tenantId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants", "{{tenantId}}"]
-            },
-            "description": "Retrieve a single tenant by its ID.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** Tenant object."
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{baseUrl}}/tenants/1"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1,\n  \"name\": \"Pizza Planet\",\n  \"address\": \"123 Main Street, Mumbai\",\n  \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n  \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n}"
-            },
-            {
-              "name": "400 Not Found",
-              "originalRequest": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{baseUrl}}/tenants/999"
-                }
-              },
-              "status": "Bad Request",
-              "code": 400,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"errors\": [\n    { \"type\": \"HttpError\", \"message\": \"Tenant does not exist.\" }\n  ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Update Tenant",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Pizza Planet (Updated)\",\n  \"address\": \"456 New Street, Delhi, India 110001\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/tenants/{{tenantId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants", "{{tenantId}}"]
-            },
-            "description": "Update an existing tenant.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "PATCH",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Pizza Planet (Updated)\",\n  \"address\": \"456 New Street, Delhi\"\n}"
+                    "name": "Get Current User (Self)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/self",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["auth", "self"]
+                        },
+                        "description": "Returns the profile of the currently authenticated user.\n\n**Auth required:** `accessToken` cookie (set on login/register).\n\n**Returns:** User object (password field omitted)."
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{baseUrl}}/auth/self"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1,\n  \"firstName\": \"Swarup\",\n  \"lastName\": \"Das\",\n  \"email\": \"swarup@example.com\",\n  \"role\": \"customer\",\n  \"tenant\": null,\n  \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n  \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n}"
+                        },
+                        {
+                            "name": "401 Unauthorized",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{baseUrl}}/auth/self"
+                                }
+                            },
+                            "status": "Unauthorized",
+                            "code": 401,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"errors\": [\n    { \"type\": \"UnauthorizedError\", \"message\": \"No authorization token was found\" }\n  ]\n}"
+                        }
+                    ]
                 },
-                "url": {
-                  "raw": "{{baseUrl}}/tenants/1"
+                {
+                    "name": "Refresh Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/refresh",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["auth", "refresh"]
+                        },
+                        "description": "Rotate tokens — exchange the existing `refreshToken` cookie for a new `accessToken` and `refreshToken`.\n\n**Auth required:** `refreshToken` cookie.\n\n**Behavior:** Deletes the old refresh token from the database and creates a new one (token rotation).\n\n**Returns:** `{ id: number }`"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "POST",
+                                "url": {
+                                    "raw": "{{baseUrl}}/auth/refresh"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/logout",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["auth", "logout"]
+                        },
+                        "description": "Log out the current user.\n\n**Auth required:** `accessToken` cookie (and `refreshToken` cookie to delete the persisted token).\n\n**Behavior:** Deletes the refresh token from the database and clears both `accessToken` and `refreshToken` cookies.\n\n**Returns:** `{}`"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "POST",
+                                "url": {
+                                    "raw": "{{baseUrl}}/auth/logout"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{}"
+                        }
+                    ]
                 }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1\n}"
-            }
-          ]
+            ]
         },
         {
-          "name": "Delete Tenant",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tenants/{{tenantId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants", "{{tenantId}}"]
-            },
-            "description": "Delete a tenant by ID.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "DELETE",
-                "url": {
-                  "raw": "{{baseUrl}}/tenants/1"
+            "name": "Tenants",
+            "description": "Restaurant / tenant management endpoints.\n\n**Note:** GET /tenants (list) is public. All other endpoints require `admin` role.",
+            "item": [
+                {
+                    "name": "Create Tenant",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Pizza Planet\",\n  \"address\": \"123 Main Street, Mumbai, Maharashtra 400001\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/tenants",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["tenants"]
+                        },
+                        "description": "Create a new restaurant tenant.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`\n\n**Validation rules:**\n- `name` – required\n- `address` – required"
+                    },
+                    "response": [
+                        {
+                            "name": "201 Created",
+                            "originalRequest": {
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Pizza Planet\",\n  \"address\": \"123 Main Street, Mumbai\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/tenants"
+                                }
+                            },
+                            "status": "Created",
+                            "code": 201,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1\n}"
+                        },
+                        {
+                            "name": "403 Forbidden",
+                            "originalRequest": {
+                                "method": "POST",
+                                "url": {
+                                    "raw": "{{baseUrl}}/tenants"
+                                }
+                            },
+                            "status": "Forbidden",
+                            "code": 403,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"errors\": [\n    { \"type\": \"ForbiddenError\", \"message\": \"You don't have enough permissions\" }\n  ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get All Tenants",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/tenants?currentPage=1&perPage=6&q=",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["tenants"],
+                            "query": [
+                                {
+                                    "key": "currentPage",
+                                    "value": "1",
+                                    "description": "Page number (default: 1)"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "6",
+                                    "description": "Items per page (default: 6)"
+                                },
+                                {
+                                    "key": "q",
+                                    "value": "",
+                                    "description": "Search query (optional)"
+                                }
+                            ]
+                        },
+                        "description": "Retrieve a paginated list of all tenants.\n\n**Auth required:** None (public endpoint).\n\n**Returns:** `{ currentPage, perPage, total, data: Tenant[] }`"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{baseUrl}}/tenants?currentPage=1&perPage=6"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"currentPage\": 1,\n  \"perPage\": 6,\n  \"total\": 2,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Pizza Planet\",\n      \"address\": \"123 Main Street, Mumbai\",\n      \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n      \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n    }\n  ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Tenant By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/tenants/{{tenantId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["tenants", "{{tenantId}}"]
+                        },
+                        "description": "Retrieve a single tenant by its ID.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** Tenant object."
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{baseUrl}}/tenants/1"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1,\n  \"name\": \"Pizza Planet\",\n  \"address\": \"123 Main Street, Mumbai\",\n  \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n  \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n}"
+                        },
+                        {
+                            "name": "400 Not Found",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{baseUrl}}/tenants/999"
+                                }
+                            },
+                            "status": "Bad Request",
+                            "code": 400,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"errors\": [\n    { \"type\": \"HttpError\", \"message\": \"Tenant does not exist.\" }\n  ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Update Tenant",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Pizza Planet (Updated)\",\n  \"address\": \"456 New Street, Delhi, India 110001\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/tenants/{{tenantId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["tenants", "{{tenantId}}"]
+                        },
+                        "description": "Update an existing tenant.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "PATCH",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Pizza Planet (Updated)\",\n  \"address\": \"456 New Street, Delhi\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/tenants/1"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Delete Tenant",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/tenants/{{tenantId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["tenants", "{{tenantId}}"]
+                        },
+                        "description": "Delete a tenant by ID.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "DELETE",
+                                "url": {
+                                    "raw": "{{baseUrl}}/tenants/1"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1\n}"
+                        }
+                    ]
                 }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1\n}"
-            }
-          ]
+            ]
+        },
+        {
+            "name": "Users",
+            "description": "User management endpoints (admin only).\n\nAll endpoints in this folder require `accessToken` cookie with `admin` role.",
+            "item": [
+                {
+                    "name": "Create User (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rahul@pizzaplanet.com\",\n  \"password\": \"manager@123\",\n  \"role\": \"manager\",\n  \"tenantId\": 1\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/users",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users"]
+                        },
+                        "description": "Create a new user (manager or admin) directly.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`\n\n**Validation rules:**\n- `firstName` – required\n- `lastName` – required\n- `email` – required, valid email\n- `password` – required, min 8 characters\n- `role` – required (`manager` or `admin`)\n- `tenantId` – required when `role` is `manager`"
+                    },
+                    "response": [
+                        {
+                            "name": "201 Created",
+                            "originalRequest": {
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rahul@pizzaplanet.com\",\n  \"password\": \"manager@123\",\n  \"role\": \"manager\",\n  \"tenantId\": 1\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/users"
+                                }
+                            },
+                            "status": "Created",
+                            "code": 201,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 2\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/users?currentPage=1&perPage=6&q=&role=",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users"],
+                            "query": [
+                                {
+                                    "key": "currentPage",
+                                    "value": "1",
+                                    "description": "Page number (default: 1)"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "6",
+                                    "description": "Items per page (default: 6)"
+                                },
+                                {
+                                    "key": "q",
+                                    "value": "",
+                                    "description": "Search query by name/email (optional)"
+                                },
+                                {
+                                    "key": "role",
+                                    "value": "",
+                                    "description": "Filter by role: customer, manager, admin (optional)"
+                                }
+                            ]
+                        },
+                        "description": "Retrieve a paginated list of all users.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ currentPage, perPage, total, data: User[] }`"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{baseUrl}}/users?currentPage=1&perPage=6"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"currentPage\": 1,\n  \"perPage\": 6,\n  \"total\": 10,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"firstName\": \"Swarup\",\n      \"lastName\": \"Das\",\n      \"email\": \"swarup@example.com\",\n      \"role\": \"customer\",\n      \"tenant\": null,\n      \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n      \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n    }\n  ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get User By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/users/{{userId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users", "{{userId}}"]
+                        },
+                        "description": "Retrieve a single user by ID.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** User object."
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{baseUrl}}/users/1"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 1,\n  \"firstName\": \"Swarup\",\n  \"lastName\": \"Das\",\n  \"email\": \"swarup@example.com\",\n  \"role\": \"customer\",\n  \"tenant\": null,\n  \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n  \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n}"
+                        },
+                        {
+                            "name": "400 Not Found",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{baseUrl}}/users/999"
+                                }
+                            },
+                            "status": "Bad Request",
+                            "code": 400,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"errors\": [\n    { \"type\": \"HttpError\", \"message\": \"User does not exist.\" }\n  ]\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Update User",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rahul@pizzaplanet.com\",\n  \"role\": \"manager\",\n  \"tenantId\": 1\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/users/{{userId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users", "{{userId}}"]
+                        },
+                        "description": "Update an existing user.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Note:** Email cannot be changed (used as username). Password cannot be changed via this endpoint.\n\n**Validation rules:**\n- `firstName` – required\n- `lastName` – required\n- `email` – required, valid email\n- `role` – required\n- `tenantId` – required when `role` is `manager`\n\n**Returns:** `{ id: number }`"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "PATCH",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rahul@pizzaplanet.com\",\n  \"role\": \"manager\",\n  \"tenantId\": 1\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/users/2"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 2\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/users/{{userId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users", "{{userId}}"]
+                        },
+                        "description": "Delete a user by ID.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`"
+                    },
+                    "response": [
+                        {
+                            "name": "200 OK",
+                            "originalRequest": {
+                                "method": "DELETE",
+                                "url": {
+                                    "raw": "{{baseUrl}}/users/2"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"id\": 2\n}"
+                        }
+                    ]
+                }
+            ]
         }
-      ]
-    },
-    {
-      "name": "Users",
-      "description": "User management endpoints (admin only).\n\nAll endpoints in this folder require `accessToken` cookie with `admin` role.",
-      "item": [
-        {
-          "name": "Create User (Admin)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rahul@pizzaplanet.com\",\n  \"password\": \"manager@123\",\n  \"role\": \"manager\",\n  \"tenantId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["users"]
-            },
-            "description": "Create a new user (manager or admin) directly.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`\n\n**Validation rules:**\n- `firstName` – required\n- `lastName` – required\n- `email` – required, valid email\n- `password` – required, min 8 characters\n- `role` – required (`manager` or `admin`)\n- `tenantId` – required when `role` is `manager`"
-          },
-          "response": [
-            {
-              "name": "201 Created",
-              "originalRequest": {
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rahul@pizzaplanet.com\",\n  \"password\": \"manager@123\",\n  \"role\": \"manager\",\n  \"tenantId\": 1\n}"
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/users"
-                }
-              },
-              "status": "Created",
-              "code": 201,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 2\n}"
-            }
-          ]
-        },
-        {
-          "name": "Get All Users",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/users?currentPage=1&perPage=6&q=&role=",
-              "host": ["{{baseUrl}}"],
-              "path": ["users"],
-              "query": [
-                {
-                  "key": "currentPage",
-                  "value": "1",
-                  "description": "Page number (default: 1)"
-                },
-                {
-                  "key": "perPage",
-                  "value": "6",
-                  "description": "Items per page (default: 6)"
-                },
-                {
-                  "key": "q",
-                  "value": "",
-                  "description": "Search query by name/email (optional)"
-                },
-                {
-                  "key": "role",
-                  "value": "",
-                  "description": "Filter by role: customer, manager, admin (optional)"
-                }
-              ]
-            },
-            "description": "Retrieve a paginated list of all users.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ currentPage, perPage, total, data: User[] }`"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{baseUrl}}/users?currentPage=1&perPage=6"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"currentPage\": 1,\n  \"perPage\": 6,\n  \"total\": 10,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"firstName\": \"Swarup\",\n      \"lastName\": \"Das\",\n      \"email\": \"swarup@example.com\",\n      \"role\": \"customer\",\n      \"tenant\": null,\n      \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n      \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n    }\n  ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Get User By ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/users/{{userId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["users", "{{userId}}"]
-            },
-            "description": "Retrieve a single user by ID.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** User object."
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{baseUrl}}/users/1"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 1,\n  \"firstName\": \"Swarup\",\n  \"lastName\": \"Das\",\n  \"email\": \"swarup@example.com\",\n  \"role\": \"customer\",\n  \"tenant\": null,\n  \"createdAt\": \"2024-01-01T00:00:00.000Z\",\n  \"updatedAt\": \"2024-01-01T00:00:00.000Z\"\n}"
-            },
-            {
-              "name": "400 Not Found",
-              "originalRequest": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{baseUrl}}/users/999"
-                }
-              },
-              "status": "Bad Request",
-              "code": 400,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"errors\": [\n    { \"type\": \"HttpError\", \"message\": \"User does not exist.\" }\n  ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Update User",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rahul@pizzaplanet.com\",\n  \"role\": \"manager\",\n  \"tenantId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/users/{{userId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["users", "{{userId}}"]
-            },
-            "description": "Update an existing user.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Note:** Email cannot be changed (used as username). Password cannot be changed via this endpoint.\n\n**Validation rules:**\n- `firstName` – required\n- `lastName` – required\n- `email` – required, valid email\n- `role` – required\n- `tenantId` – required when `role` is `manager`\n\n**Returns:** `{ id: number }`"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "PATCH",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"firstName\": \"Rahul\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rahul@pizzaplanet.com\",\n  \"role\": \"manager\",\n  \"tenantId\": 1\n}"
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/users/2"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 2\n}"
-            }
-          ]
-        },
-        {
-          "name": "Delete User",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/users/{{userId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["users", "{{userId}}"]
-            },
-            "description": "Delete a user by ID.\n\n**Auth required:** `accessToken` cookie with `admin` role.\n\n**Returns:** `{ id: number }`"
-          },
-          "response": [
-            {
-              "name": "200 OK",
-              "originalRequest": {
-                "method": "DELETE",
-                "url": {
-                  "raw": "{{baseUrl}}/users/2"
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "body": "{\n  \"id\": 2\n}"
-            }
-          ]
-        }
-      ]
-    }
-  ]
+    ]
 }
