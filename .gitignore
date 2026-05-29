@@ -149,3 +149,4 @@ public/
 
 .env.docker.prod
 .env.dockerImage.prod
+.well-known/
