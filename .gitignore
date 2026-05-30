@@ -110,6 +110,12 @@ dist
 # vitepress cache directory
 **/.vitepress/cache
 
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
 # Docusaurus cache and generated files
 .docusaurus
 
@@ -134,6 +140,21 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.vscode/settings.json
+.vscode/settings.json
+
+
+.vscode/settings.json
+.env.dev
+.env.prod
+.env.test
+
+
+certs/
+public/
+
+.env.docker.prod
+.env.dockerImage.prod
 .vscode/settings.json
 .vscode/settings.json
 
