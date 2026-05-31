@@ -110,12 +110,15 @@ dist
 # vitepress cache directory
 **/.vitepress/cache
 
+<<<<<<< HEAD
 # vitepress build output
 **/.vitepress/dist
 
 # vitepress cache directory
 **/.vitepress/cache
 
+=======
+>>>>>>> 78ef46514f6f89372279931a3f7869a35c233563
 # Docusaurus cache and generated files
 .docusaurus
 
@@ -155,6 +158,7 @@ public/
 
 .env.docker.prod
 .env.dockerImage.prod
+<<<<<<< HEAD
 .vscode/settings.json
 .vscode/settings.json
 
@@ -171,3 +175,5 @@ public/
 .env.docker.prod
 .env.dockerImage.prod
 .well-known/
+=======
+>>>>>>> 78ef46514f6f89372279931a3f7869a35c233563
