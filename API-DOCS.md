@@ -66,8 +66,8 @@ Register a new customer account.
 
 **Sets cookies:**
 
--   `accessToken` (httpOnly, sameSite: strict, 1 day)
--   `refreshToken` (httpOnly, sameSite: strict, 1 year)
+- `accessToken` (httpOnly, sameSite: strict, 1 day)
+- `refreshToken` (httpOnly, sameSite: strict, 1 year)
 
 **Response — `400 Bad Request` (validation failure):**
 
@@ -114,8 +114,8 @@ Authenticate a user with email and password.
 
 **Sets cookies:**
 
--   `accessToken` (httpOnly, sameSite: strict, 1 day)
--   `refreshToken` (httpOnly, sameSite: strict, 1 year)
+- `accessToken` (httpOnly, sameSite: strict, 1 day)
+- `refreshToken` (httpOnly, sameSite: strict, 1 year)
 
 **Response — `400 Bad Request` (wrong credentials):**
 
@@ -182,10 +182,10 @@ Rotate both tokens — exchanges the existing `refreshToken` cookie for new `acc
 
 **Behavior:**
 
--   Validates the refresh token's JWT signature and checks it exists in the database
--   Deletes the old refresh token from the database
--   Persists a new refresh token
--   Issues new `accessToken` and `refreshToken` cookies
+- Validates the refresh token's JWT signature and checks it exists in the database
+- Deletes the old refresh token from the database
+- Persists a new refresh token
+- Issues new `accessToken` and `refreshToken` cookies
 
 **Response — `200 OK`:**
 
@@ -195,8 +195,8 @@ Rotate both tokens — exchanges the existing `refreshToken` cookie for new `acc
 
 **Sets cookies:**
 
--   `accessToken` (new, httpOnly, 1 day)
--   `refreshToken` (new, httpOnly, 1 year)
+- `accessToken` (new, httpOnly, 1 day)
+- `refreshToken` (new, httpOnly, 1 year)
 
 ---
 
@@ -210,9 +210,9 @@ Log out the current user.
 
 **Behavior:**
 
--   Reads `id` from the refresh token JWT (the DB record ID)
--   Deletes the refresh token from the database
--   Clears both `accessToken` and `refreshToken` cookies
+- Reads `id` from the refresh token JWT (the DB record ID)
+- Deletes the refresh token from the database
+- Clears both `accessToken` and `refreshToken` cookies
 
 **Response — `200 OK`:**
 

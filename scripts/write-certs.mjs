@@ -51,4 +51,6 @@ fs.writeFileSync(
     JSON.stringify({ keys: [jwk] }, null, 4),
 );
 
-console.log("[write-certs] wrote certs/, dist/certs/ and public/.well-known/jwks.json");
+console.log(
+    "[write-certs] wrote certs/, dist/certs/ and public/.well-known/jwks.json",
+);
