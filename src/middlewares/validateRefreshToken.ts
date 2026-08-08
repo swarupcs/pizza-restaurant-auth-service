@@ -1,4 +1,5 @@
 import { expressjwt } from "express-jwt";
+import { JwtPayload } from "jsonwebtoken";
 import { Config } from "../config";
 import { Request } from "express";
 import { AuthCookie, IRefreshTokenPayload } from "../types";
@@ -14,18 +15,23 @@ export default expressjwt({
         return refreshToken;
     },
     async isRevoked(request: Request, token) {
+        // express-jwt types `payload` as `JwtPayload | string`. Reading `.sub`
+        // off the un-narrowed union resolved to String.prototype.sub, so
+        // Number(...) yielded NaN and the user lookup could never match.
+        const payload = token?.payload as IRefreshTokenPayload & JwtPayload;
+
         try {
             const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
             const refreshToken = await refreshTokenRepo.findOne({
                 where: {
-                    id: Number((token?.payload as IRefreshTokenPayload).id),
-                    user: { id: Number(token?.payload.sub) },
+                    id: Number(payload.id),
+                    user: { id: Number(payload.sub) },
                 },
             });
             return refreshToken === null;
-        } catch (err) {
+        } catch {
             logger.error("Error while getting the refresh token", {
-                id: (token?.payload as IRefreshTokenPayload).id,
+                id: payload.id,
             });
         }
         return true;

@@ -34,7 +34,7 @@ export class UserService {
                 role,
                 tenant: tenantId ? { id: tenantId } : undefined,
             });
-        } catch (err) {
+        } catch {
             const error = createHttpError(
                 500,
                 "Failed to store the data in the database",
@@ -48,14 +48,17 @@ export class UserService {
             where: {
                 email,
             },
-            select: [
-                "id",
-                "firstName",
-                "lastName",
-                "email",
-                "role",
-                "password",
-            ],
+            // TypeORM 1.x dropped the string-array form of `select`.
+            // `password` is `select: false` on the entity, so it must stay
+            // listed explicitly here or login can never verify a credential.
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                role: true,
+                password: true,
+            },
             relations: {
                 tenant: true,
             },
@@ -85,7 +88,7 @@ export class UserService {
                 email,
                 tenant: tenantId ? { id: tenantId } : null,
             });
-        } catch (err) {
+        } catch {
             const error = createHttpError(
                 500,
                 "Failed to update the user in the database",
