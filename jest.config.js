@@ -11,6 +11,10 @@ module.exports = {
         customExportConditions: ["node", "require", "default"],
     },
     verbose: true,
+    // The suite talks to a real Postgres (Neon) over the network, and every
+    // test drops and re-synchronizes the schema first. Jest's 5s default is
+    // tight enough that seeding a handful of rows can trip it.
+    testTimeout: 30000,
     collectCoverage: true,
     coverageProvider: "v8",
     collectCoverageFrom: ["src/**/*.ts", "!tests/**", "!**/node_modules/**"],
